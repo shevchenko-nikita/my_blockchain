@@ -1,7 +1,7 @@
-
 use std::collections::HashMap;
-mod types;
 
+pub mod types;
+pub mod traits;
 
 
 

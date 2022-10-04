@@ -1,3 +1,5 @@
+use blake2::{Blake2s, Digest};
+use blake2::digest::FixedOutput;
 use crate::types::{Hash, Transaction};
 
 #[derive(Default, Debug)]
@@ -25,10 +27,16 @@ impl Block {
     }
 
     pub fn hash(&self) -> Hash {
-
-        String::new()
+        let mut hasher = Blake2s::new();
+        hasher.update(format!("{:?}", (self.prev_hash.clone(), self.nonce)).as_bytes());
+        for tx in self.transactions.iter() {
+            hasher.update(tx.hash());
+        }
+        hex::encode(hasher.finalize_fixed())
     }
 }
+
+
 
 #[cfg(test)]
 mod tests {
@@ -42,5 +50,18 @@ mod tests {
         block.set_nonce(1);
         block.add_transaction(tx);
         dbg!(block);
+    }
+    
+    #[test]
+    fn test_hash() {
+        let mut block = Block::new(None);
+        block.set_nonce(1);
+        let hash1 = block.hash();
+
+        let mut tx = Transaction::new(TransactionData::CreateAccount("alice".to_string()), None);
+        block.transactions.push(tx);
+        let hash2 = block.hash();
+
+        assert_ne!(hash1, hash2);
     }
 }
