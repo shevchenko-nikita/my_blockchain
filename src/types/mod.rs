@@ -2,7 +2,9 @@ mod transaction;
 mod account;
 mod blockchain;
 mod block;
+mod chain;
 
+pub use chain::Chain;
 pub use account::{Account, AccountType};
 pub use transaction::{Transaction, TransactionData};
 pub use blockchain::Blockchain;

@@ -1,5 +1,6 @@
 use blake2::{Blake2s, Digest};
 use blake2::digest::FixedOutput;
+use crate::traits::Hashable;
 use crate::types::{AccountId, Balance, Hash, Timestamp};
 
 #[derive(Debug)]
@@ -22,8 +23,10 @@ impl Transaction {
 
         }
     }
+}
 
-    pub fn hash(&self) -> Hash {
+impl Hashable for Transaction {
+    fn hash(&self) -> Hash {
         let mut hasher = Blake2s::new();
         hasher.update(format!(
             "{:?}",
