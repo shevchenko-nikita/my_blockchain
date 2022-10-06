@@ -3,7 +3,7 @@ use blake2::digest::FixedOutput;
 use crate::traits::Hashable;
 use crate::types::{AccountId, Balance, Hash, Timestamp};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Transaction {
     nonce: u128,
     timestamp: Timestamp,

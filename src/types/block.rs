@@ -3,10 +3,10 @@ use blake2::digest::FixedOutput;
 use crate::traits::Hashable;
 use crate::types::{Hash, Transaction};
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Block {
     nonce: u128,
-    hash: Option<Hash>,
+    pub(crate) hash: Option<Hash>,
     prev_hash: Option<Hash>,
     transactions: Vec<Transaction>
 }
@@ -19,6 +19,10 @@ impl Block {
         };
         block.update_hash();
         block
+    }
+
+    pub fn verify(&self) -> bool {
+        matches!(&self.hash, Some(hash) if hash == &self.hash())
     }
 
     pub fn set_nonce(&mut self, nonce: u128) {

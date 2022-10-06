@@ -1,10 +1,10 @@
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Node<T> {
     data: T,
     prev: Option<Box<Node<T>>>,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Chain<T> {
     head: Option<Box<Node<T>>>,
     len: usize,
@@ -14,7 +14,7 @@ impl<'a, T> Iterator for ChainIter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.next.take().map(|node| {
+        self.next.map(|node| {
             self.next = node.prev.as_deref();
             &node.data
         })
@@ -49,7 +49,7 @@ impl<T: Default> Chain<T> {
         }
     }
 
-    pub fn iter(&self) -> ChainIter<T> {
+    pub fn iter (&self) -> ChainIter<T> {
         ChainIter {
             next: self.head.as_deref(),
 
