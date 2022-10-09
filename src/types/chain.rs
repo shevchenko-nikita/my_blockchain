@@ -21,9 +21,23 @@ impl<'a, T> Iterator for ChainIter<'a, T> {
     }
 }
 
+impl<'a, T> Iterator for ChainIterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.take().map(|node| {
+            self.next = node.prev.as_deref_mut();
+            &mut node.data
+        })
+    }
+}
+
 pub struct ChainIter<'a, T> {
     next: Option<&'a Node<T>>,
+}
 
+pub struct ChainIterMut<'a, T> {
+    next: Option<&'a mut Node<T>>,
 }
 
 impl<T: Default> Chain<T> {
@@ -45,14 +59,19 @@ impl<T: Default> Chain<T> {
     pub fn head(&self) -> Option<&T> {
         match &self.head {
             None => None,
-            Some(head) => Some(&head.data)
+            Some(head) => Some(&head.data),
         }
     }
 
-    pub fn iter (&self) -> ChainIter<T> {
+    pub fn iter(&self) -> ChainIter<T> {
         ChainIter {
             next: self.head.as_deref(),
+        }
+    }
 
+    pub fn iter_mut(&mut self) -> ChainIterMut<T> {
+        ChainIterMut {
+            next: self.head.as_deref_mut(),
         }
     }
 }

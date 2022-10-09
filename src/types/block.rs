@@ -1,19 +1,19 @@
-use blake2::{Blake2s, Digest};
-use blake2::digest::FixedOutput;
 use crate::traits::Hashable;
 use crate::types::{Hash, Transaction};
+use blake2::digest::FixedOutput;
+use blake2::{Blake2s, Digest};
 
 #[derive(Default, Debug, Clone)]
 pub struct Block {
     nonce: u128,
     pub(crate) hash: Option<Hash>,
-    prev_hash: Option<Hash>,
-    transactions: Vec<Transaction>
+    pub(crate) prev_hash: Option<Hash>,
+    pub(crate) transactions: Vec<Transaction>,
 }
 
 impl Block {
     pub fn new(prev_hash: Option<Hash>) -> Self {
-        let mut block = Block{
+        let mut block = Block {
             prev_hash,
             ..Default::default()
         };
@@ -53,25 +53,25 @@ impl Hashable for Block {
 
 #[cfg(test)]
 mod tests {
-    use crate::types::TransactionData;
     use super::*;
+    use crate::types::TransactionData;
 
     #[test]
     fn test_creation() {
         let mut block = Block::new(None);
-        let mut tx = Transaction::new(TransactionData::CreateAccount("alice".to_string()), None);
+        let tx = Transaction::new(TransactionData::CreateAccount("alice".to_string()), None);
         block.set_nonce(1);
         block.add_transaction(tx);
         dbg!(block);
     }
-    
+
     #[test]
     fn test_hash() {
         let mut block = Block::new(None);
         block.set_nonce(1);
         let hash1 = block.hash();
 
-        let mut tx = Transaction::new(TransactionData::CreateAccount("alice".to_string()), None);
+        let tx = Transaction::new(TransactionData::CreateAccount("alice".to_string()), None);
         block.transactions.push(tx);
         let hash2 = block.hash();
 
